@@ -1,4 +1,5 @@
 #!/bin/bash
+#Notice: You shold place the script at the directory './storage'
 if [ "$#" -ne 1 ]; then
     echo "Usage: $0 <file>"
     exit 1
