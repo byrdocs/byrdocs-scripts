@@ -1,5 +1,5 @@
 #!/bin/bash
-#Notice: You should store the file in the directory 'byrdocs.org/storage'
+#Notice: You should store the file in the directory 'byrdocs.org/stockpile' and run this command here
 if [ "$#" -ne 1 ]; then
     echo "Usage: $0 <file>"
     exit 1
@@ -10,7 +10,6 @@ if [ ! -f "${file}" ]; then
     exit 2
 fi
 extension="${file##*.}"
-dir=$(dirname "$(dirname "${file}")")
 md5=$(md5sum "${file}" | cut -d ' ' -f 1)
 echo $md5
 if [ "${extension}" = "pdf" ]; then
@@ -34,5 +33,5 @@ case $category in
         exit 3
         ;;
 esac
-destination="${dir}/${category}/${md5}.${extension}"
+destination="../${category}/${md5}.${extension}"
 mv -v "${file}" "${destination}"
