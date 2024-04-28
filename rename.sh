@@ -1,20 +1,22 @@
 #!/bin/bash
+#Notice: You should store the file in the directory 'byrdocs.org/storage'
 if [ "$#" -ne 1 ]; then
     echo "Usage: $0 <file>"
     exit 1
 fi
-FILE="$1"
-if [ ! -f "${FILE}" ]; then
+file=$1
+if [ ! -f "${file}" ]; then
     echo "Error: File does not exist."
     exit 2
 fi
-EXTENSION="${FILE##*.}"
-MD5SUM=$(md5sum "${FILE}" | cut -d ' ' -f 1)
-echo $MD5SUM
-if [ "${EXTENSION}" = "pdf" ]; then
-    evince "${FILE}"
-elif [ "${EXTENSION}" = "zip" ]; then
-    file-roller "${FILE}"
+extension="${file##*.}"
+dir=$(dirname "$(dirname "${file}")")
+md5=$(md5sum "${file}" | cut -d ' ' -f 1)
+echo $md5
+if [ "${extension}" = "pdf" ]; then
+    evince "${file}"
+elif [ "${extension}" = "zip" ]; then
+    file-roller "${file}"
 fi
 read -p "Input category: " category
 case $category in
@@ -32,5 +34,5 @@ case $category in
         exit 3
         ;;
 esac
-DEST="../${category}/${MD5SUM}.${EXTENSION}"
-mv -v "${FILE}" "${DEST}"
+destination="${dir}/${category}/${md5}.${extension}"
+mv -v "${file}" "${destination}"
