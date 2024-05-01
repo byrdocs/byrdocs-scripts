@@ -11,8 +11,7 @@ if [ ! -f "${file}" ]; then
 fi
 extension="${file##*.}"
 md5=$(md5sum "${file}" | cut -d ' ' -f 1)
-size=$(stat --format="%s" "${file}")
-echo $md5 $size
+echo $md5
 if [ "${extension}" = "pdf" ]; then
     evince "${file}"
 elif [ "${extension}" = "zip" ]; then
