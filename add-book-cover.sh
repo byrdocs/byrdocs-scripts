@@ -4,7 +4,7 @@ if [ "$#" -ne 2 ]; then
     exit 1
 fi
 ori=$1
-=$2
+img=$2
 dir=$(dirname "${ori}")
 convert $img 'img.pdf'
 pdftk 'img.pdf' $ori cat output 'tmp.pdf'
