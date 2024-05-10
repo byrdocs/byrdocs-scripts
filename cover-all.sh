@@ -26,4 +26,3 @@ find "$input_dir" -type f -name "*.pdf" | while read pdf_file; do
 		cwebp -mt -size 10240 "$path.jpg" -o "$path.webp"
     echo "Converted $pdf_file to $path.{png,jpg}"
 done
-

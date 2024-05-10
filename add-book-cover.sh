@@ -6,12 +6,13 @@ fi
 ori=$1
 img=$2
 dir=$(dirname "${ori}")
-convert $img 'img.pdf'
+convert "${img}" 'img.pdf'
 #`imagemagic` is required for `convert`
-pdftk 'img.pdf' $ori cat output 'tmp.pdf'
-md5=$(md5sum 'tmp.pdf' | cut -d ' ' -f 1)
+pdftk "img.pdf" "${ori}" cat output 'tmp.pdf'
+#`pdftk` is required
+md5=$(md5sum "tmp.pdf" | cut -d ' ' -f 1)
 echo $md5
 destination="${dir}/${md5}.pdf"
-mv 'tmp.pdf' $destination
-echo "${ori} -> $destination"
-rm 'img.pdf'
+mv "tmp.pdf" "${destination}"
+echo "${ori} -> ${destination}"
+rm "img.pdf"
