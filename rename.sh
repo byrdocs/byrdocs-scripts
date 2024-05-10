@@ -13,9 +13,9 @@ extension="${file##*.}"
 md5=$(md5sum "${file}" | cut -d ' ' -f 1)
 echo $md5
 if [ "${extension}" = "pdf" ]; then
-    evince "${file}"
+    okular "${file}" #`okular` is required for pdf viewer
 elif [ "${extension}" = "zip" ]; then
-    file-roller "${file}"
+    ark "${file}" #`ark` is required for zip processor
 fi
 read -p "Input category: " category
 case $category in
