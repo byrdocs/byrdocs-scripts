@@ -104,5 +104,5 @@ esac
 destination="../${category}/${md5}.${extension}"
 mv -v "${file}" "${destination}"
 if [[ cover -eq 1 ]]; then
-    ./cover.sh "../${category}/${md5}.${extension}" "../covers"
+    ./extract-cover.sh -v "../${category}/${md5}.${extension}" "../covers"
 fi

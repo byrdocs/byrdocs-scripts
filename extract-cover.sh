@@ -32,7 +32,7 @@ process_single() {
         rm "${base_path}.jpg"
     fi
     if [[ "${verboseQ}" -eq 1 ]]; then
-        echo "Converted ${pdf}"
+        echo "Extracted covers from ${pdf}"
     fi
 }
 if [ "$#" -eq 0 ]; then
