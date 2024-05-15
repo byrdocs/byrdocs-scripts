@@ -1,22 +1,31 @@
 #!/bin/bash
 usage() {
-    echo "Usage: $0 [OPTION]... <file>"
-    echo
-    echo "Options"
-    echo "--cover, -c        generate covers by the way ()"
-    echo "--help, -h         show this help"
-    echo "--noreview, -R     don't review the file"
-    echo
-    echo "Notice: You should store the file in the directory 'stockpile' and run this command here"
-    echo
-    exit 1
+    cat <<EOF
+Usage: $0 [OPTION]... <file>
+
+Options:
+  -c, --cover        Generate covers
+  -R, --noreview     Don't review the file
+  -h, --help         Show this help message
+
+Input category: <category>
+Options:
+  b    books
+  t    tests
+  d    docs
+
+Notice: You should store the file in the directory 'stockpile' and run this command here.
+EOF
+    exit 0
 }
 if [[ "$#" -eq 0 ]]; then
     usage
 fi
 cover=0
 review=1
-while [[ "$#" -gt 0 ]]; do
+OPTIONS=$(getopt -o chR --long cover,help,noreview -n 'parse-options' -- "$@")
+eval set -- "${OPTIONS}"
+while true; do
     case $1 in
         -c|--cover)
             cover=1
@@ -33,45 +42,46 @@ while [[ "$#" -gt 0 ]]; do
             shift
             break
             ;;
-        -*)
-            echo "Unknown option: $1"
-            usage
-            ;;
         *)
-            file="$1"
-            shift
+            echo "Unknown option: $1"
             ;;
     esac
 done
-extension="${file##*.}"
-md5=$(md5sum "${file}" | cut -d ' ' -f 1)
+if [[ "$#" -ne 1 ]]; then
+    echo "Error: Exactly one file must be provided."
+    exit 1
+fi
+file="$1"
 if [[ ! -f "${file}" ]]; then
     echo "Error: File does not exist."
     exit 2
 fi
-if [[ review -eq 1 ]]; then
-    for cmd in okular ark; do
-        if ! command -v $cmd &> /dev/null; then
-            echo "Error: $cmd is not installed. Please install it to continue."
-            exit 3
-        fi
-    done
-fi
-if [[ cover -eq 1 ]]; then
-    for cmd in pdftoppm convert cwebp; do
-        if ! command -v $cmd &> /dev/null; then
-            echo "Error: $cmd is not installed. Please install it to continue."
-            exit 3
-        fi
-done
-fi
+extension="${file##*.}"
+md5=$(md5sum "${file}" | cut -d ' ' -f 1)
 echo $md5
-if [[ review -eq 1 ]]; then
-    if [[ "${extension}" = "pdf" ]]; then
-        okular "${file}" #`okular` is required for pdf viewer
-    elif [[ "${extension}" = "zip" ]]; then
-        ark "${file}" #`ark` is required for zip processor
+if [[ cover -eq 1 ]]; then
+    ./check-commands.sh pdftoppm convert cwebp
+    if [[ "$?" -ne 0 ]]; then
+        exit 3
     fi
+fi
+if [[ review -eq 1 ]]; then
+    case "${extension}" in
+        "pdf")
+            ./check-commands.sh okular
+            if [[ "$?" -ne  0 ]]; then
+                exit 3
+            fi
+            okular "${file}"
+            ;;
+        "zip")
+            ./check-commands.sh ark
+            if [[ "$?" -ne 0 ]]; then
+                exit 3
+            fi
+            ark "${file}"
+            ;;
+    esac
 fi
 read -p "Input category: " category
 case $category in
@@ -85,7 +95,8 @@ case $category in
         category="docs"
         ;;
     *)
-        echo -e "Invalid category!\nb for books, t for tests, d for docs"
+        echo "Invalid category!"
+        echo "b for books, t for tests, d for docs"
         exit 4
         ;;
 esac
