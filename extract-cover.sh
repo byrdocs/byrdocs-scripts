@@ -96,7 +96,7 @@ export webpQ
 export verboseQ
 if [[ "${recursiveQ}" -eq 1 ]]; then
     if [[ -d "${input_path}" ]]; then
-        find "${input_path}" -type f -name '*.pdf' -exec bash -c 'process_single "$0" "${output_dir}"' {} \;
+        find "${input_path}" -type f -name *.pdf -exec bash -c 'process_single "$0" "${output_dir}"' {} \;
     else
         echo "Error: ${input_path} is a directory"
         exit 3

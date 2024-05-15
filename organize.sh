@@ -4,9 +4,9 @@ usage() {
 Usage: $0 [OPTION]... <file>
 
 Options:
-  -c, --cover       Generate covers
-  -R, --noreview    Don't review the file
-  -h, --help        Show this help message
+  -c, --cover       generate covers
+  -R, --noreview    don't review the file
+  -h, --help        show this help message
 
 Input category: <category>
 Category options:
@@ -16,10 +16,10 @@ Category options:
 
 Notice: You should store the file in the directory 'stockpile' and run this command here.
 EOF
-    exit 0
 }
 if [[ "$#" -eq 0 ]]; then
     usage
+    exit 1
 fi
 cover=0
 review=1
@@ -33,6 +33,7 @@ while true; do
             ;;
         -h|--help)
             usage
+            exit 0
             ;;
         -R|--noreview)
             review=0
