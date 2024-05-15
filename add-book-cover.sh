@@ -1,6 +1,9 @@
 #!/bin/bash
 if [ "$#" -ne 2 ]; then
-    echo "Usage: $0 <pdf-file> <cover-img>"
+    cat <<EOF
+Usage: $0 [OPTION]... <pdf-file> <cover-img>
+
+EOF
     exit 1
 fi
 ori=$1

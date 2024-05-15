@@ -4,15 +4,15 @@ usage() {
 Usage: $0 [OPTION]... <file>
 
 Options:
-  -c, --cover        Generate covers
-  -R, --noreview     Don't review the file
-  -h, --help         Show this help message
+  -c, --cover       Generate covers
+  -R, --noreview    Don't review the file
+  -h, --help        Show this help message
 
 Input category: <category>
-Options:
-  b    books
-  t    tests
-  d    docs
+Category options:
+  b     books
+  t     tests
+  d     docs
 
 Notice: You should store the file in the directory 'stockpile' and run this command here.
 EOF
