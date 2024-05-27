@@ -42,14 +42,14 @@ if [[ "$#" -ne 2 ]]; then
 fi
 ori=$1
 img=$2
-./check-commands.sh convert pdftk
+./check-commands.sh magick pdftk
 if [[ "$?" -ne 0 ]]; then
     exit 2
 fi
 if [[ "${img}" == *.pdf ]]; then
     pdftk "${img}" cat 1 output 'img.pdf'
 else
-    convert "${img}" 'img.pdf'
+    magick "${img}" 'img.pdf'
 fi
 if [[ "${replaceQ}" -eq 1 ]]; then
     pdftk A='img.pdf' B="${ori}" cat A B2-end output 'tmp.pdf'

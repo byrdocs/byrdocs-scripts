@@ -61,7 +61,7 @@ extension="${file##*.}"
 md5=$(md5sum "${file}" | cut -d ' ' -f 1)
 echo $md5
 if [[ cover -eq 1 ]]; then
-    ./check-commands.sh pdftoppm convert cwebp
+    ./check-commands.sh pdftoppm magick cwebp
     if [[ "$?" -ne 0 ]]; then
         exit 3
     fi

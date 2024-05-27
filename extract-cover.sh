@@ -22,9 +22,9 @@ process_single() {
     base_path="${output_dir}/${base_name}"
     pdftoppm -f 1 -l 1 -singlefile -jpeg -jpegopt quality=100 "${pdf}" "${base_path}"
     if [[ "${pngQ}" -eq 1 ]]; then
-        convert "${base_path}.jpg" "${base_path}.png"
+        magick "${base_path}.jpg" "${base_path}.png"
     fi
-    convert "${base_path}.jpg" -resize 1024x1024 -define jpeg:extent=500kb "${base_path}.jpg"
+    magick "${base_path}.jpg" -resize 1024x1024 -define jpeg:extent=500kb "${base_path}.jpg"
     if [[ "${webpQ}" -eq 1 ]]; then
         cwebp -mt -quiet -size 10240 "${base_path}.jpg" -o "${base_path}.webp"
     fi
@@ -81,7 +81,7 @@ while true; do
             ;;
     esac
 done
-./check-commands.sh pdftoppm convert cwebp
+./check-commands.sh pdftoppm magick cwebp
 if [[ "$?" -ne 0 ]]; then
     exit 2
 fi
