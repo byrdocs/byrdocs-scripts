@@ -87,20 +87,26 @@ while true; do
 done
 if [[ "$#" -ne 1 ]]; then
     echo "Error: Exactly one file must be provided."
-    exit 1
+    exit 2
 fi
 file="$1"
 if [[ ! -f "${file}" ]]; then
     echo "Error: File does not exist."
-    exit 2
+    exit 3
 fi
 extension="${file##*.}"
 md5=$(md5sum "${file}" | cut -d ' ' -f 1)
+dirs_to_find=("${BOOKS_DIR}" "${TESTS_DIR}" "${DOCS_DIR}")
+if [[ -n $(find "${dirs_to_find[@]}" -type f -name "${md5}.*") ]]; then
+    echo "There are already some files named ${md5}. Please check them:"
+    find "${dirs_to_find[@]}" -type f -name "${md5}.*"
+    exit 5
+fi
 echo $md5
 if [[ jpgQ -eq 1 ]] || [[ pngQ -eq 1 ]] || [[ webpQ -eq 1 ]]; then
     ./check-commands.sh pdftoppm magick cwebp
     if [[ "$?" -ne 0 ]]; then
-        exit 3
+        exit 5
     fi
 fi
 if [[ reviewQ -eq 1 ]]; then
@@ -108,14 +114,14 @@ if [[ reviewQ -eq 1 ]]; then
         "pdf")
             ./check-commands.sh evince
             if [[ "$?" -ne  0 ]]; then
-                exit 3
+                exit 5
             fi
             evince "${file}"
             ;;
         "zip")
             ./check-commands.sh ark
             if [[ "$?" -ne 0 ]]; then
-                exit 3
+                exit 5
             fi
             ark "${file}"
             ;;
@@ -135,7 +141,7 @@ case $category in
     *)
         echo "Invalid category!"
         echo "b for books, t for tests, d for docs"
-        exit 4
+        exit 6
         ;;
 esac
 destination="${category}/${md5}.${extension}"
