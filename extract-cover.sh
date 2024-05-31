@@ -6,13 +6,17 @@ Extract cover picture from one pdf file, or from all pdf files in a directory
 
 Options:
   -r, --recursive   process a directory recursively
+  -j, --jpg         output with jpg
   -p, --png         output with png
+  -w, --webp        output with webp
   -J, --nojpg       output without jpg
+  -P, --nopng       output without png
   -W, --nowebp      output without webp
   -v, --verbose     explain what is being done
   -h, --help        show this help message
 
 Notice: this command is only available to pdf files, or directories containing pdf files
+If both --jpg and --nojpg are provided, the one appeared last will be settled.
 EOF
 }
 process_single() {
@@ -39,12 +43,26 @@ if [ "$#" -eq 0 ]; then
     usage
     exit 1
 fi
+GLOBAL_CONFIG_FILE="./config.conf"
+if [[ -f "${GLOBAL_CONFIG_FILE}" ]]; then
+    source "${GLOBAL_CONFIG_FILE}"
+else
+    echo "Configuration file ${GLOBAL_CONFIG_FILE} not found!"
+    exit 1
+fi
+SCRIPT_CONFIG_FILE="./config-extract-cover.conf"
+if [[ -f "${SCRIPT_CONFIG_FILE}" ]]; then
+    source "${SCRIPT_CONFIG_FILE}"
+else
+    echo "Configuration file ${SCRIPT_CONFIG_FILE} not found!"
+    exit 1
+fi
 recursiveQ=0;
-pngQ=0;
-jpgQ=1;
-webpQ=1;
+jpgQ=$GENERATE_JPG
+pngQ=$GENERATE_PNG
+webpQ=$GENERATE_WEBP
 verboseQ=0;
-OPTIONS=$(getopt -o rpJWvh --long recursive,png,nojpg,nowebp,verbose,help -n 'parse-options' -- "$@")
+OPTIONS=$(getopt -o rjpwJPWvh --long recursive,jpg,png,webp,nojpg,nopng,nowebp,verbose,help -n 'parse-options' -- "$@")
 eval set -- "${OPTIONS}"
 while true; do
     case $1 in
@@ -52,12 +70,24 @@ while true; do
             recursiveQ=1
             shift
             ;;
+        -j|--jpg)
+            jpgQ=1
+            shift
+            ;;
         -p|--png)
             pngQ=1
             shift
             ;;
+        -w|--webp)
+            webpQ=1
+            shift
+            ;;
         -J|--nojpg)
             jpgQ=0
+            shift
+            ;;
+        -P|--nopng)
+            pngQ=0
             shift
             ;;
         -W|--nowebp)
@@ -96,7 +126,7 @@ export webpQ
 export verboseQ
 if [[ "${recursiveQ}" -eq 1 ]]; then
     if [[ -d "${input_path}" ]]; then
-        find "${input_path}" -type f -name *.pdf -exec bash -c 'process_single "$0" "${output_dir}"' {} \;
+        find "${input_path}" -type f -name '*.pdf' -exec bash -c 'process_single "$0" "${output_dir}"' {} \;
     else
         echo "Error: ${input_path} is a directory"
         exit 3

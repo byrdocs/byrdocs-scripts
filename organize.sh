@@ -4,9 +4,17 @@ usage() {
 Usage: $0 [OPTION]... <file>
 
 Options:
-  -c, --cover       generate covers
-  -R, --noreview    don't review the file
+  -j, --jpg         generate cover jpg
+  -p, --png         generate cover png
+  -w, --webp        generate cover webp
+  -J, --nojpg       do not generate cover jpg
+  -P, --nopng       do not generate cover png
+  -W, --nowebp      do not generate cover webp
+  -R, --noreview    do not review the file
   -h, --help        show this help message
+
+Default options are stored in ./config_organize.conf.
+If both --jpg and --nojpg are provided, the one appeared last will be settled.
 
 Input category: <category>
 Category options:
@@ -21,14 +29,43 @@ if [[ "$#" -eq 0 ]]; then
     usage
     exit 1
 fi
-cover=0
-review=1
-OPTIONS=$(getopt -o chR --long cover,help,noreview -n 'parse-options' -- "$@")
+CONFIG_FILE="./config.conf"
+if [[ -f "${CONFIG_FILE}" ]]; then
+    source "${CONFIG_FILE}"
+else
+    echo "Configuration file ${CONFIG_FILE} not found!"
+    exit 1
+fi
+pngQ=$GENERATE_PNG
+jpgQ=$GENERATE_JPG
+webpQ=$GENERATE_WEBP
+reviewQ=1
+OPTIONS=$(getopt -o jpwJPWhR --long jpg,png,webp,noJPG,noPNG,noWEBP,help,noreview -n 'parse-options' -- "$@")
 eval set -- "${OPTIONS}"
 while true; do
     case $1 in
-        -c|--cover)
-            cover=1
+        -j|--jpg)
+            jpgQ=1
+            shift
+            ;;
+        -p|--png)
+            pngQ=1
+            shift
+            ;;
+        -w|--webp)
+            webpQ=1
+            shift
+            ;;
+        -J|--nojpg)
+            jpgQ=0
+            shift
+            ;;
+        -P|--nopng)
+            pngQ=0
+            shift
+            ;;
+        -W|--nowebp)
+            webpQ=0
             shift
             ;;
         -h|--help)
@@ -36,7 +73,7 @@ while true; do
             exit 0
             ;;
         -R|--noreview)
-            review=0
+            reviewQ=0
             shift
             ;;
         --)
@@ -60,20 +97,20 @@ fi
 extension="${file##*.}"
 md5=$(md5sum "${file}" | cut -d ' ' -f 1)
 echo $md5
-if [[ cover -eq 1 ]]; then
+if [[ jpgQ -eq 1 ]] || [[ pngQ -eq 1 ]] || [[ webpQ -eq 1 ]]; then
     ./check-commands.sh pdftoppm magick cwebp
     if [[ "$?" -ne 0 ]]; then
         exit 3
     fi
 fi
-if [[ review -eq 1 ]]; then
+if [[ reviewQ -eq 1 ]]; then
     case "${extension}" in
         "pdf")
-            ./check-commands.sh okular
+            ./check-commands.sh evince
             if [[ "$?" -ne  0 ]]; then
                 exit 3
             fi
-            okular "${file}"
+            evince "${file}"
             ;;
         "zip")
             ./check-commands.sh ark
@@ -87,13 +124,13 @@ fi
 read -p "Input category: " category
 case $category in
     b)
-        category="books"
+        category="${BOOKS_DIR}"
         ;;
     t)
-        category="tests"
+        category="${TESTS_DIR}"
         ;;
     d)
-        category="docs"
+        category="${DOCS_DIR}"
         ;;
     *)
         echo "Invalid category!"
@@ -101,8 +138,14 @@ case $category in
         exit 4
         ;;
 esac
-destination="../${category}/${md5}.${extension}"
+destination="${category}/${md5}.${extension}"
 mv -v "${file}" "${destination}"
-if [[ cover -eq 1 ]]; then
-    ./extract-cover.sh -v "../${category}/${md5}.${extension}" "../covers"
+if [[ jpgQ -eq 1 ]]; then
+    ./extract-cover.sh -jPW "${destination}" "${COVERS_DIR}"
+fi
+if [[ pngQ -eq 1 ]]; then
+    ./extract-cover.sh -JpW "${destination}" "${COVERS_DIR}"
+fi
+if [[ webpQ -eq 1 ]]; then
+    ./extract-cover.sh -JPw "${destination}" "${COVERS_DIR}"
 fi

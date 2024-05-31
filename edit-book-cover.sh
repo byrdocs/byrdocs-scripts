@@ -6,7 +6,7 @@ Add or replace the cover of a pdf file.
 the cover-file should be pdf or any image type
 
 Options:
-  -r, --replace     replace the original cover (add by default)
+  -r, --replace     replace the original cover (add cover by default)
   -h, --help        show this help message
 EOF
 }
