@@ -3,7 +3,7 @@ usage() {
     cat <<EOF
 Usage: $0 [OPTION]... <pdf-file> <cover-file>
 Add or replace the cover of a pdf file.
-the cover-file should be pdf or any image type
+The cover-file should be pdf or any image type.
 
 Options:
   -r, --replace     replace the original cover (add cover by default)

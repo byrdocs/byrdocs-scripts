@@ -2,7 +2,7 @@
 usage() {
     cat <<EOF
 Usage: $0 [OPTION]... <path-to-file-or-dir> <path-to-dest>
-Extract cover picture from one pdf file, or from all pdf files in a directory
+Extract cover picture from one pdf file, or from all pdf files in a directory.
 
 Options:
   -r, --recursive   process a directory recursively
@@ -48,14 +48,14 @@ if [ "$#" -eq 0 ]; then
     usage
     exit 1
 fi
-GLOBAL_CONFIG_FILE="./config.conf"
+GLOBAL_CONFIG_FILE="./.config.conf"
 if [[ -f "${GLOBAL_CONFIG_FILE}" ]]; then
     source "${GLOBAL_CONFIG_FILE}"
 else
     echo "Configuration file ${GLOBAL_CONFIG_FILE} not found!"
     exit 1
 fi
-SCRIPT_CONFIG_FILE="./config-extract-cover.conf"
+SCRIPT_CONFIG_FILE="./.config-extract-cover.conf"
 if [[ -f "${SCRIPT_CONFIG_FILE}" ]]; then
     source "${SCRIPT_CONFIG_FILE}"
 else

@@ -30,7 +30,7 @@ if [[ "$#" -eq 0 ]]; then
     usage
     exit 1
 fi
-CONFIG_FILE="./config.conf"
+CONFIG_FILE="./.config.conf"
 if [[ -f "${CONFIG_FILE}" ]]; then
     source "${CONFIG_FILE}"
 else
