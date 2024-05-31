@@ -42,7 +42,6 @@ process_single() {
             echo "Extracted '${base_path}.webp'"
         fi
     fi
-    rm "${output_dir}/tmp.jpg"
 }
 if [ "$#" -eq 0 ]; then
     usage
@@ -144,3 +143,4 @@ else
         exit 4
     fi
 fi
+rm "${output_dir}/tmp.jpg"
