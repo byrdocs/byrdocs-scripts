@@ -116,7 +116,7 @@ while true; do
             ;;
     esac
 done
-./check-commands.sh pdftoppm magick cwebp
+./.check-commands.sh pdftoppm magick cwebp
 if [[ "$?" -ne 0 ]]; then
     exit 2
 fi

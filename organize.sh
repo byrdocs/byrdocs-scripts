@@ -110,7 +110,7 @@ if [[ -n $(find "${dirs_to_find[@]}" -type f -name "${md5}.*") ]]; then
 fi
 echo $md5
 if [[ "$jpgQ" -eq 1 ]] || [[ "$pngQ" -eq 1 ]] || [[ "$webpQ" -eq 1 ]]; then
-    ./check-commands.sh pdftoppm magick cwebp
+    ./.check-commands.sh pdftoppm magick cwebp
     if [[ "$?" -ne 0 ]]; then
         exit 5
     fi
@@ -118,14 +118,14 @@ fi
 if [[ "$reviewQ" -eq 1 ]]; then
     case "${extension}" in
         "pdf")
-            ./check-commands.sh evince
+            ./.check-commands.sh evince
             if [[ "$?" -ne  0 ]]; then
                 exit 5
             fi
             evince "${file}"
             ;;
         "zip")
-            ./check-commands.sh ark
+            ./.check-commands.sh ark
             if [[ "$?" -ne 0 ]]; then
                 exit 5
             fi

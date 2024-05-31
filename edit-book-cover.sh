@@ -42,7 +42,7 @@ if [[ "$#" -ne 2 ]]; then
 fi
 ori=$1
 img=$2
-./check-commands.sh magick pdftk
+./.check-commands.sh magick pdftk
 if [[ "$?" -ne 0 ]]; then
     exit 2
 fi

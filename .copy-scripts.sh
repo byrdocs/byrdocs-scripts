@@ -3,13 +3,18 @@ usage() {
     cat <<EOF
 Usage: $0
 Copy all scripts and configurations to STOCKPILE_DIR, no args needed.
+Notice: hidden scripts like 
 EOF
 }
-CONFIG_FILE="./config.conf"
+CONFIG_FILE="./.config.conf"
 if [[ -f "${CONFIG_FILE}" ]]; then
     source "${CONFIG_FILE}"
 else
     echo "Configuration file ${CONFIG_FILE} not found!"
     exit 1
 fi
-cp -v *.sh *.conf $STOCKPILE_DIR
+scripts=(".check-commands.sh" "edit-book-cover.sh" "extract-cover.sh" "organize.sh")
+cp -v .*.conf "${STOCKPILE_DIR}"
+for script in "${scripts[@]}"; do
+    cp -v "${script}" "${STOCKPILE_DIR}"
+done
