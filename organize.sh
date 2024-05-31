@@ -11,6 +11,7 @@ Options:
   -P, --nopng       do not generate cover png
   -W, --nowebp      do not generate cover webp
   -R, --noreview    do not review the file
+  -v, --verbose     print more details
   -h, --help        show this help message
 
 Default options are stored in ./config_organize.conf.
@@ -36,11 +37,12 @@ else
     echo "Configuration file ${CONFIG_FILE} not found!"
     exit 1
 fi
-pngQ=$GENERATE_PNG
 jpgQ=$GENERATE_JPG
+pngQ=$GENERATE_PNG
 webpQ=$GENERATE_WEBP
+verboseQ=0
 reviewQ=1
-OPTIONS=$(getopt -o jpwJPWhR --long jpg,png,webp,noJPG,noPNG,noWEBP,help,noreview -n 'parse-options' -- "$@")
+OPTIONS=$(getopt -o jpwJPWvhR --long jpg,png,webp,noJPG,noPNG,noWEBP,verbose,help,noreview -n 'parse-options' -- "$@")
 eval set -- "${OPTIONS}"
 while true; do
     case $1 in
@@ -66,6 +68,10 @@ while true; do
             ;;
         -W|--nowebp)
             webpQ=0
+            shift
+            ;;
+        -v|--verbose)
+            verboseQ=1
             shift
             ;;
         -h|--help)
@@ -103,13 +109,13 @@ if [[ -n $(find "${dirs_to_find[@]}" -type f -name "${md5}.*") ]]; then
     exit 5
 fi
 echo $md5
-if [[ jpgQ -eq 1 ]] || [[ pngQ -eq 1 ]] || [[ webpQ -eq 1 ]]; then
+if [[ "$jpgQ" -eq 1 ]] || [[ "$pngQ" -eq 1 ]] || [[ "$webpQ" -eq 1 ]]; then
     ./check-commands.sh pdftoppm magick cwebp
     if [[ "$?" -ne 0 ]]; then
         exit 5
     fi
 fi
-if [[ reviewQ -eq 1 ]]; then
+if [[ "$reviewQ" -eq 1 ]]; then
     case "${extension}" in
         "pdf")
             ./check-commands.sh evince
@@ -146,12 +152,24 @@ case $category in
 esac
 destination="${category}/${md5}.${extension}"
 mv -v "${file}" "${destination}"
-if [[ jpgQ -eq 1 ]]; then
-    ./extract-cover.sh -jPW "${destination}" "${COVERS_DIR}"
+if [[ "$jpgQ" -eq 1 ]]; then
+    if [[ "$verboseQ" -eq 1 ]]; then
+        ./extract-cover.sh -jPWv "${destination}" "${COVERS_DIR}"
+    else
+        ./extract-cover.sh -jPW "${destination}" "${COVERS_DIR}"
+    fi
 fi
-if [[ pngQ -eq 1 ]]; then
-    ./extract-cover.sh -JpW "${destination}" "${COVERS_DIR}"
+if [[ "$pngQ" -eq 1 ]]; then
+    if [[ "$verboseQ" -eq 1 ]]; then
+        ./extract-cover.sh -JpWv "${destination}" "${COVERS_DIR}"
+    else
+        ./extract-cover.sh -JpW "${destination}" "${COVERS_DIR}"
+    fi
 fi
-if [[ webpQ -eq 1 ]]; then
-    ./extract-cover.sh -JPw "${destination}" "${COVERS_DIR}"
+if [[ "$webpQ" -eq 1 ]]; then
+    if [[ "$verboseQ" -eq 1 ]]; then
+        ./extract-cover.sh -JPwv "${destination}" "${COVERS_DIR}"
+    else
+        ./extract-cover.sh -JPw "${destination}" "${COVERS_DIR}"
+    fi
 fi
