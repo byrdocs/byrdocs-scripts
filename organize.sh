@@ -118,18 +118,18 @@ fi
 if [[ "$reviewQ" -eq 1 ]]; then
     case "${extension}" in
         "pdf")
-            ./.check-commands.sh evince
+            ./.check-commands.sh $PDF_VIEWER
             if [[ "$?" -ne  0 ]]; then
                 exit 5
             fi
-            evince "${file}"
+            $PDF_VIEWER "${file}"
             ;;
         "zip")
-            ./.check-commands.sh ark
+            ./.check-commands.sh $ZIP_VIEWER
             if [[ "$?" -ne 0 ]]; then
                 exit 5
             fi
-            ark "${file}"
+            $ZIP_VIEWER "${file}"
             ;;
     esac
 fi
