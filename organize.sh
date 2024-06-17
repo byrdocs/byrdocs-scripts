@@ -152,24 +152,26 @@ case $category in
 esac
 destination="${category}/${md5}.${extension}"
 mv -v "${file}" "${destination}"
-if [[ "$jpgQ" -eq 1 ]]; then
-    if [[ "$verboseQ" -eq 1 ]]; then
-        ./extract-cover.sh -jPWv "${destination}" "${COVERS_DIR}"
-    else
-        ./extract-cover.sh -jPW "${destination}" "${COVERS_DIR}"
+if [[ "${extension}" == "pdf" ]]; then
+    if [[ "$jpgQ" -eq 1 ]]; then
+        if [[ "$verboseQ" -eq 1 ]]; then
+            ./extract-cover.sh -jPWv "${destination}" "${COVERS_DIR}"
+        else
+            ./extract-cover.sh -jPW "${destination}" "${COVERS_DIR}"
+        fi
     fi
-fi
-if [[ "$pngQ" -eq 1 ]]; then
-    if [[ "$verboseQ" -eq 1 ]]; then
-        ./extract-cover.sh -JpWv "${destination}" "${COVERS_DIR}"
-    else
-        ./extract-cover.sh -JpW "${destination}" "${COVERS_DIR}"
+    if [[ "$pngQ" -eq 1 ]]; then
+        if [[ "$verboseQ" -eq 1 ]]; then
+            ./extract-cover.sh -JpWv "${destination}" "${COVERS_DIR}"
+        else
+            ./extract-cover.sh -JpW "${destination}" "${COVERS_DIR}"
+        fi
     fi
-fi
-if [[ "$webpQ" -eq 1 ]]; then
-    if [[ "$verboseQ" -eq 1 ]]; then
-        ./extract-cover.sh -JPwv "${destination}" "${COVERS_DIR}"
-    else
-        ./extract-cover.sh -JPw "${destination}" "${COVERS_DIR}"
+    if [[ "$webpQ" -eq 1 ]]; then
+        if [[ "$verboseQ" -eq 1 ]]; then
+            ./extract-cover.sh -JPwv "${destination}" "${COVERS_DIR}"
+        else
+            ./extract-cover.sh -JPw "${destination}" "${COVERS_DIR}"
+        fi
     fi
 fi
