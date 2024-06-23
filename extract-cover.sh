@@ -25,9 +25,11 @@ process_single() {
     base_name=$(basename "${pdf}" .pdf)
     base_path="${output_dir}/${base_name}"
     pdftoppm -f 1 -l 1 -singlefile -jpeg -jpegopt quality=100 "${pdf}" "${output_dir}/tmp"
-    if [[ "${jpgQ}" -eq 1 ]] && [[ "${verboseQ}" -eq 1 ]]; then
+    if [[ "${jpgQ}" -eq 1 ]]; then
         cp "${output_dir}/tmp.jpg" "${base_path}.jpg"
-        echo "Extracted '${base_path}.jpg'"
+        if [[ "${verboseQ}" -eq 1 ]]; then
+            echo "Extracted '${base_path}.jpg'"
+        fi
     fi
     if [[ "${pngQ}" -eq 1 ]]; then
         magick "${output_dir}/tmp.jpg" "${base_path}.png"
@@ -35,9 +37,8 @@ process_single() {
             echo "Extracted '${base_path}.png'"
         fi
     fi
-    magick "${output_dir}/tmp.jpg" -resize 1024x1024 -define jpeg:extent=500kb "${base_path}.jpg"
     if [[ "${webpQ}" -eq 1 ]]; then
-        cwebp -mt -quiet -size 10240 "${output_dir}/tmp.jpg" -o "${base_path}.webp"
+        cwebp -mt -resize 465 645 -quiet "${output_dir}/tmp.jpg" -o "${base_path}.webp"
         if [[ "${verboseQ}" -eq 1 ]]; then
             echo "Extracted '${base_path}.webp'"
         fi
