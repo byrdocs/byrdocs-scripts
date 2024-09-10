@@ -22,6 +22,7 @@ Category options:
   b     books
   t     tests
   d     docs
+  R     (type this to remove that file)
 
 Notice: You should store the file in the directory 'stockpile' and run this command here.
 EOF
@@ -144,6 +145,10 @@ case $category in
     d)
         category="${DOCS_DIR}"
         ;;
+	R)
+		rm -v "${file}"
+		exit 0
+		;;
     *)
         echo "Invalid category!"
         echo "b for books, t for tests, d for docs"
