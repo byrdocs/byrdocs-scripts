@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/zsh-5.9
 usage() {
     cat <<EOF
 Usage: $0 [OPTION]... <path-to-file-or-dir> <path-to-dest>
@@ -22,23 +22,30 @@ EOF
 process_single() {
     local pdf=$1
     local output_dir=$2
+	cropbox_l=$((2*$(pdfinfo -box -f 1 -l 1 "${pdf}" | grep "CropBox" | awk '{print $4}')))
+	cropbox_b=$((2*$(pdfinfo -box -f 1 -l 1 "${pdf}" | grep "CropBox" | awk '{print $5}')))
+	cropbox_r=$((2*$(pdfinfo -box -f 1 -l 1 "${pdf}" | grep "CropBox" | awk '{print $6}')))
+	cropbox_t=$((2*$(pdfinfo -box -f 1 -l 1 "${pdf}" | grep "CropBox" | awk '{print $7}')))
+	crop_width=$((cropbox_r - cropbox_l))
+	crop_height=$((cropbox_t - cropbox_b))
     base_name=$(basename "${pdf}" .pdf)
     base_path="${output_dir}/${base_name}"
-    pdftoppm -f 1 -l 1 -singlefile -jpeg -jpegopt quality=100 "${pdf}" "${output_dir}/tmp"
+    pdftoppm -singlefile -jpeg -r 144 "${pdf}" "/tmp/ori"
+	magick "/tmp/ori.jpg" -crop ${crop_width}x${crop_height}+${cropbox_l}+${cropbox_b} "/tmp/tmp.jpg"
     if [[ "${jpgQ}" -eq 1 ]]; then
-        cp "${output_dir}/tmp.jpg" "${base_path}.jpg"
+        cp "/tmp/tmp.jpg" "${base_path}.jpg"
         if [[ "${verboseQ}" -eq 1 ]]; then
             echo "Extracted '${base_path}.jpg'"
         fi
     fi
     if [[ "${pngQ}" -eq 1 ]]; then
-        magick "${output_dir}/tmp.jpg" "${base_path}.png"
+        magick "/tmp/tmp.jpg" "${base_path}.png"
         if [[ "${verboseQ}" -eq 1 ]]; then
             echo "Extracted '${base_path}.png'"
         fi
     fi
     if [[ "${webpQ}" -eq 1 ]]; then
-        cwebp -mt -resize 465 645 -quiet "${output_dir}/tmp.jpg" -o "${base_path}.webp"
+        cwebp -mt -resize 465 645 -quiet "/tmp/tmp.jpg" -o "${base_path}.webp"
         if [[ "${verboseQ}" -eq 1 ]]; then
             echo "Extracted '${base_path}.webp'"
         fi
@@ -144,4 +151,3 @@ else
         exit 4
     fi
 fi
-rm "${output_dir}/tmp.jpg"
