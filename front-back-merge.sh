@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/zsh-5.9
 if [ "$#" -ne 2 ]; then
     echo "Usage: $0 <front-pdf> <back-pdf>"
     exit 1

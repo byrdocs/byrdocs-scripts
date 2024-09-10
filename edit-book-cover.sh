@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/zsh-5.9
 usage() {
     cat <<EOF
 Usage: $0 [OPTION]... <pdf-file> <cover-file>

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/zsh-5.9
 if [ "$#" -ne 1 ]; then
 	echo "Usage: $0 <isbn-10-without-dashes>"
 	exit 1
