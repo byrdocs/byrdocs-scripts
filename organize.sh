@@ -134,7 +134,8 @@ if [[ "$reviewQ" -eq 1 ]]; then
             ;;
     esac
 fi
-read -p "Input category: " category
+echo -n "Input category: "
+read category
 case $category in
     b)
         category="${BOOKS_DIR}"
