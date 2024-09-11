@@ -99,7 +99,7 @@ output_dir=$2
 mkdir -p "${output_dir}"
 if [[ "${recursiveQ}" -eq 1 ]]; then
     if [[ -d "${input_path}" ]]; then
-        find "${input_path}" -type f -name '*.pdf' -exec zsh -c './.extract-single-cover.sh "$0" "${output_dir}"' {} \;
+		find "${input_path}" -type f -name '*.pdf' -exec zsh -c './.extract-single-cover.sh "$0" "$1"' {} "${output_dir}" \;
     else
         echo "Error: ${input_path} is a directory"
         exit 3
