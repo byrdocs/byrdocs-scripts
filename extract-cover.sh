@@ -19,38 +19,6 @@ Notice: this command is only available to pdf files, or directories containing p
 If both --jpg and --nojpg are provided, the one appeared last will be settled.
 EOF
 }
-process_single() {
-    local pdf=$1
-    local output_dir=$2
-	cropbox_l=$((2*$(pdfinfo -box -f 1 -l 1 "${pdf}" | grep "CropBox" | awk '{print $4}')))
-	cropbox_b=$((2*$(pdfinfo -box -f 1 -l 1 "${pdf}" | grep "CropBox" | awk '{print $5}')))
-	cropbox_r=$((2*$(pdfinfo -box -f 1 -l 1 "${pdf}" | grep "CropBox" | awk '{print $6}')))
-	cropbox_t=$((2*$(pdfinfo -box -f 1 -l 1 "${pdf}" | grep "CropBox" | awk '{print $7}')))
-	crop_width=$((cropbox_r - cropbox_l))
-	crop_height=$((cropbox_t - cropbox_b))
-    base_name=$(basename "${pdf}" .pdf)
-    base_path="${output_dir}/${base_name}"
-    pdftoppm -singlefile -jpeg -r 144 "${pdf}" "/tmp/ori"
-	magick "/tmp/ori.jpg" -crop ${crop_width}x${crop_height}+${cropbox_l}+${cropbox_b} "/tmp/tmp.jpg"
-    if [[ "${jpgQ}" -eq 1 ]]; then
-        cp "/tmp/tmp.jpg" "${base_path}.jpg"
-        if [[ "${verboseQ}" -eq 1 ]]; then
-            echo "Extracted '${base_path}.jpg'"
-        fi
-    fi
-    if [[ "${pngQ}" -eq 1 ]]; then
-        magick "/tmp/tmp.jpg" "${base_path}.png"
-        if [[ "${verboseQ}" -eq 1 ]]; then
-            echo "Extracted '${base_path}.png'"
-        fi
-    fi
-    if [[ "${webpQ}" -eq 1 ]]; then
-        cwebp -mt -resize 465 645 -quiet "/tmp/tmp.jpg" -o "${base_path}.webp"
-        if [[ "${verboseQ}" -eq 1 ]]; then
-            echo "Extracted '${base_path}.webp'"
-        fi
-    fi
-}
 if [ "$#" -eq 0 ]; then
     usage
     exit 1
@@ -62,18 +30,14 @@ else
     echo "Configuration file ${GLOBAL_CONFIG_FILE} not found!"
     exit 1
 fi
-SCRIPT_CONFIG_FILE="./.config-extract-cover.conf"
-if [[ -f "${SCRIPT_CONFIG_FILE}" ]]; then
-    source "${SCRIPT_CONFIG_FILE}"
-else
-    echo "Configuration file ${SCRIPT_CONFIG_FILE} not found!"
-    exit 1
-fi
-recursiveQ=0;
 jpgQ=$GENERATE_JPG
 pngQ=$GENERATE_PNG
 webpQ=$GENERATE_WEBP
+recursiveQ=0;
 verboseQ=0;
+if [[ -f "/tmp/organize-properties.conf" ]]; then
+    source "/tmp/organize-properties.conf"
+fi
 OPTIONS=$(getopt -o rjpwJPWvh --long recursive,jpg,png,webp,nojpg,nopng,nowebp,verbose,help -n 'parse-options' -- "$@")
 eval set -- "${OPTIONS}"
 while true; do
@@ -123,29 +87,26 @@ while true; do
             ;;
     esac
 done
-./.check-commands.sh pdftoppm magick cwebp
 if [[ "$?" -ne 0 ]]; then
     exit 2
 fi
+echo "verboseQ=${verboseQ}" > /tmp/extract-cover-properties.conf
+echo "jpgQ=${jpgQ}" >> /tmp/extract-cover-properties.conf
+echo "pngQ=${pngQ}" >> /tmp/extract-cover-properties.conf
+echo "webpQ=${webpQ}" >> /tmp/extract-cover-properties.conf
 input_path=$1
 output_dir=$2
 mkdir -p "${output_dir}"
-export -f process_single
-export output_dir
-export jpgQ
-export pngQ
-export webpQ
-export verboseQ
 if [[ "${recursiveQ}" -eq 1 ]]; then
     if [[ -d "${input_path}" ]]; then
-        find "${input_path}" -type f -name '*.pdf' -exec bash -c 'process_single "$0" "${output_dir}"' {} \;
+        find "${input_path}" -type f -name '*.pdf' -exec zsh -c './.extract-single-cover.sh "$0" "${output_dir}"' {} \;
     else
         echo "Error: ${input_path} is a directory"
         exit 3
     fi
 else
     if [[ "${input_path}" == *.pdf ]]; then
-        process_single "${input_path}" "${output_dir}"
+        ./.extract-single-cover.sh "${input_path}" "${output_dir}"
     else
         echo "Error: The input file is not a PDF."
         exit 4
