@@ -7,6 +7,7 @@ The cover-file should be pdf or any image type.
 
 Options:
   -r, --replace     replace the original cover (add cover by default)
+  -u, --url         downlad cover-file from url instead of using local file
   -h, --help        show this help message
 EOF
 }
@@ -15,7 +16,8 @@ if [[ "$#" -eq 0 ]]; then
     exit 1
 fi
 replaceQ=0
-OPTIONS=$(getopt -o rh --long replace,help -n 'parse-options' -- "$@")
+urlQ=0
+OPTIONS=$(getopt -o ruh --long replace,url,help -n 'parse-options' -- "$@")
 eval set -- "${OPTIONS}"
 while true; do
     case $1 in
@@ -23,6 +25,10 @@ while true; do
             replaceQ=1
             shift
             ;;
+		-u|--url)
+			urlQ=1
+			shift
+			;;
         -h|--help)
             usage
             exit 0
@@ -36,13 +42,21 @@ while true; do
             ;;
     esac
 done
+ori=$1
 if [[ "$#" -ne 2 ]]; then
     echo "Error: missing pdf file or cover file, or redundant files are provided."
     exit 2
 fi
-ori=$1
-img=$2
-./.check-commands.sh magick pdftk
+if [[ "$urlQ" -eq 1 ]]; then
+	img=$(wget -c --content-disposition --spider --show-progress -P /tmp $2 2>&1 | grep -oP '(?<=Saving to: ‘)[^’]+')
+	if [[ "$?" -ne 0 ]]; then
+		echo "Can't download the file from url. Maybe the file is existing in /tmp"
+		exit 3
+	fi
+else
+	img=$2
+fi
+./.check-commands.sh wget magick pdftk
 if [[ "$?" -ne 0 ]]; then
     exit 2
 fi
