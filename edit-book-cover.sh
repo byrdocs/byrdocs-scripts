@@ -47,16 +47,15 @@ if [[ "$?" -ne 0 ]]; then
     exit 2
 fi
 if [[ "${img}" == *.pdf ]]; then
-    pdftk "${img}" cat 1 output 'img.pdf'
+    pdftk "${img}" cat 1 output "/tmp/edit-book-cover-img.pdf"
 else
-    magick "${img}" 'img.pdf'
+    magick "${img}" "/tmp/edit-book-cover-img.pdf"
 fi
 if [[ "${replaceQ}" -eq 1 ]]; then
-    pdftk A='img.pdf' B="${ori}" cat A B2-end output 'tmp.pdf'
+    pdftk A="/tmp/edit-book-cover-img.pdf" B="${ori}" cat A B2-end output "/tmp/edit-book-cover-tmp.pdf"
 else
-    pdftk A='img.pdf' B="${ori}" cat A B1-end output 'tmp.pdf'
+    pdftk A="/tmp/edit-book-cover-img.pdf" B="${ori}" cat A B1-end output "/tmp/edit-book-cover-tmp.pdf"
 fi
-md5=$(md5sum "tmp.pdf" | cut -d ' ' -f 1)
-mv 'tmp.pdf' "${md5}.pdf"
+md5=$(md5sum "/tmp/edit-book-cover-tmp.pdf" | cut -d ' ' -f 1)
+mv "/tmp/edit-book-cover-tmp.pdf" "${md5}.pdf"
 echo "${ori} -> ${md5}.pdf"
-rm 'img.pdf'
