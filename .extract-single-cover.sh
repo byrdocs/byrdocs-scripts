@@ -51,16 +51,6 @@ if [[ "${jpgQ}" -eq 1 ]]; then
 		echo "Extracted '${base_path}.jpg'"
 	fi
 fi
-if [[ "${pngQ}" -eq 1 ]]; then
-	if [[ "${magick_exception}" -eq 0 ]]; then
-		magick "/tmp/extract-single-tmp.jpg" "${base_path}.png"
-	else
-		echo "Notice: This file is in the magick-exception list. Unable to generate PNG."
-	fi
-	if [[ "${verboseQ}" -eq 1 ]]; then
-		echo "Extracted '${base_path}.png'"
-	fi
-fi
 if [[ "${webpQ}" -eq 1 ]]; then
 	cwebp -mt -resize 465 645 -quiet "/tmp/extract-single-tmp.jpg" -o "${base_path}.webp"
 	if [[ "${verboseQ}" -eq 1 ]]; then

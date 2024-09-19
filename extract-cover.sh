@@ -7,10 +7,8 @@ Extract cover picture from one pdf file, or from all pdf files in a directory.
 Options:
   -r, --recursive   process a directory recursively
   -j, --jpg         output with jpg
-  -p, --png         output with png
   -w, --webp        output with webp
   -J, --nojpg       output without jpg
-  -P, --nopng       output without png
   -W, --nowebp      output without webp
   -v, --verbose     explain what is being done
   -h, --help        show this help message
@@ -31,14 +29,13 @@ else
     exit 1
 fi
 jpgQ=$GENERATE_JPG
-pngQ=$GENERATE_PNG
 webpQ=$GENERATE_WEBP
 recursiveQ=0;
 verboseQ=0;
 if [[ -f "/tmp/organize-properties.conf" ]]; then
     source "/tmp/organize-properties.conf"
 fi
-OPTIONS=$(getopt -o rjpwJPWvh --long recursive,jpg,png,webp,nojpg,nopng,nowebp,verbose,help -n 'parse-options' -- "$@")
+OPTIONS=$(getopt -o rjpwJPWvh --long recursive,jpg,webp,nojpg,nowebp,verbose,help -n 'parse-options' -- "$@")
 eval set -- "${OPTIONS}"
 while true; do
     case $1 in
@@ -50,20 +47,12 @@ while true; do
             jpgQ=1
             shift
             ;;
-        -p|--png)
-            pngQ=1
-            shift
-            ;;
         -w|--webp)
             webpQ=1
             shift
             ;;
         -J|--nojpg)
             jpgQ=0
-            shift
-            ;;
-        -P|--nopng)
-            pngQ=0
             shift
             ;;
         -W|--nowebp)
@@ -92,7 +81,6 @@ if [[ "$?" -ne 0 ]]; then
 fi
 echo "verboseQ=${verboseQ}" > /tmp/extract-cover-properties.conf
 echo "jpgQ=${jpgQ}" >> /tmp/extract-cover-properties.conf
-echo "pngQ=${pngQ}" >> /tmp/extract-cover-properties.conf
 echo "webpQ=${webpQ}" >> /tmp/extract-cover-properties.conf
 input_path=$1
 output_dir=$2
