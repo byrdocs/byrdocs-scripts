@@ -14,7 +14,7 @@
 
 ```bash config
 # .config.conf
-BYRDOCS_DIR="${HOME}/BYRDOCS/byrdocs.org"
+BYRDOCS_DIR="${HOME}/BYRDOCS/resources"
 STOCKPILE_DIR="${HOME}/BYRDOCS/stockpile"
 COVERS_DIR="${BYRDOCS_DIR}/covers"
 BOOKS_DIR="${BYRDOCS_DIR}/books"
@@ -25,11 +25,4 @@ GENERATE_PNG="0"
 GENERATE_WEBP="1"
 PDF_VIEWER="evince"
 ZIP_VIEWER="ark"
-```
-
-```bash config
-# .config-extract-cover.conf
-GENERATE_JPG="1"
-GENERATE_PNG="0"
-GENERATE_WEBP="1"
 ```
