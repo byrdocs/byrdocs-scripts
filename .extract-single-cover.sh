@@ -15,6 +15,19 @@ else
 	exit 1
 fi
 pdf=$1
+md5=$(md5sum "${pdf}" | cut -d ' ' -f 1)
+if [[ -f ".magick-except.conf" ]]; then
+	source ".magick-except.conf"
+else
+	MAGICK_EXCEPTION=()
+fi
+magick_exception=0
+for item in "${MAGICK_EXCEPTION[@]}"; do
+	if [[ "${item}" == "${md5}" ]]; then
+		magick_exception=1
+		break
+	fi
+done
 output_dir=$2
 ./.check-commands.sh pdfinfo pdftoppm magick cwebp
 cropbox_l=$((2*$(pdfinfo -box -f 1 -l 1 "${pdf}" | grep "CropBox" | awk '{print $4}')))
@@ -26,7 +39,11 @@ crop_height=$((cropbox_t - cropbox_b))
 base_name=$(basename "${pdf}" .pdf)
 base_path="${output_dir}/${base_name}"
 pdftoppm -singlefile -jpeg -r 144 "${pdf}" "/tmp/extract-single-ori"
-magick "/tmp/extract-single-ori.jpg" -crop ${crop_width}x${crop_height}+${cropbox_l}+${cropbox_b} "/tmp/extract-single-tmp.jpg"
+if [[ "${magick_exception}" -eq 1 ]]; then
+	magick "/tmp/extract-single-ori.jpg" -crop ${crop_width}x${crop_height}+${cropbox_l}+${cropbox_b} "/tmp/extract-single-tmp.jpg"
+else
+	echo "Notice: This file is in the magick-exception list. Unable to crop file."
+fi
 if [[ "${jpgQ}" -eq 1 ]]; then
 	cp "/tmp/extract-single-tmp.jpg" "${base_path}.jpg"
 	if [[ "${verboseQ}" -eq 1 ]]; then
@@ -34,7 +51,11 @@ if [[ "${jpgQ}" -eq 1 ]]; then
 	fi
 fi
 if [[ "${pngQ}" -eq 1 ]]; then
-	magick "/tmp/extract-single-tmp.jpg" "${base_path}.png"
+	if [[ "${magick_exception}" -eq 1 ]]; then
+		magick "/tmp/extract-single-tmp.jpg" "${base_path}.png"
+	else
+		echo "Notice: This file is in the magick-exception list. Unable to generate PNG."
+	fi
 	if [[ "${verboseQ}" -eq 1 ]]; then
 		echo "Extracted '${base_path}.png'"
 	fi
