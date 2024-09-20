@@ -19,6 +19,8 @@ for ((i=1; i<=num_pages; i++)); do
     pdftk_cmd+=" A${i}"
     pdftk_cmd+=" B$((num_pages - i + 1))"
 done
-pdftk_cmd+=" output merged.pdf"
+pdftk_cmd+=" output /tmp/front-back-merged.pdf"
 eval "${pdftk_cmd}"
-echo "Merged ${front_pdf} and ${back_pdf} as merged.pdf"
+md5=$(md5sum "/tmp/front-back-merged.pdf" | cut -d ' ' -f 1)
+mv "/tmp/front-back-merged.pdf" "${md5}.pdf"
+echo "Merged ${front_pdf} and ${back_pdf} as ${md5}.pdf"
