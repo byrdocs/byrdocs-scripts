@@ -25,11 +25,3 @@ GENERATE_WEBP="1"
 PDF_VIEWER="evince"
 ZIP_VIEWER="ark"
 ```
-
-### `magick-exception` 文件
-
-`magick`指令可能无法用于某些大文件。你可以把它加入到排除列表中，从而避免引起故障。以下是示例。
-
-```bash config
-MAGICK_EXCEPTION=("610f8620aac14b1653849f1a6245f714")
-```

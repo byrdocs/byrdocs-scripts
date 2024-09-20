@@ -38,13 +38,8 @@ crop_width=$((cropbox_r - cropbox_l))
 crop_height=$((cropbox_t - cropbox_b))
 base_name=$(basename "${pdf}" .pdf)
 base_path="${output_dir}/${base_name}"
-pdftoppm -singlefile -jpeg -r 144 "${pdf}" "/tmp/extract-single-ori"
-if [[ "${magick_exception}" -eq 0 ]]; then
-	magick "/tmp/extract-single-ori.jpg" -crop ${crop_width}x${crop_height}+${cropbox_l}+${cropbox_b} "/tmp/extract-single-tmp.jpg"
-else
-	mv "/tmp/extract-single-ori.jpg" "/tmp/extract-single-tmp.jpg"
-	echo "Notice: This file is in the magick-exception list. Unable to crop file."
-fi
+gs -dQUIET -o "/tmp/extract-single-tmp.pdf" -sDEVICE=pdfwrite -dLastPage=1 -c "${cropbox_l} ${cropbox_b} ${crop_width} ${crop_height} rectclip" -f "${pdf}"
+pdftoppm -singlefile -jpeg -r 144 "/tmp/extract-single-tmp.pdf" "/tmp/extract-single-tmp"
 if [[ "${jpgQ}" -eq 1 ]]; then
 	cp "/tmp/extract-single-tmp.jpg" "${base_path}.jpg"
 	if [[ "${verboseQ}" -eq 1 ]]; then
