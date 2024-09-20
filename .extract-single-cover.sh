@@ -30,10 +30,10 @@ for item in "${MAGICK_EXCEPTION[@]}"; do
 	fi
 done
 ./.check-commands.sh pdfinfo pdftoppm magick cwebp
-cropbox_l=$((2*$(pdfinfo -box -f 1 -l 1 "${pdf}" | grep "CropBox" | awk '{print $4}')))
-cropbox_b=$((2*$(pdfinfo -box -f 1 -l 1 "${pdf}" | grep "CropBox" | awk '{print $5}')))
-cropbox_r=$((2*$(pdfinfo -box -f 1 -l 1 "${pdf}" | grep "CropBox" | awk '{print $6}')))
-cropbox_t=$((2*$(pdfinfo -box -f 1 -l 1 "${pdf}" | grep "CropBox" | awk '{print $7}')))
+cropbox_l=$((2*$(pdfinfo -box -f 1 -l 1 "${pdf}" | grep -a "CropBox" | awk '{print $4}')))
+cropbox_b=$((2*$(pdfinfo -box -f 1 -l 1 "${pdf}" | grep -a "CropBox" | awk '{print $5}')))
+cropbox_r=$((2*$(pdfinfo -box -f 1 -l 1 "${pdf}" | grep -a "CropBox" | awk '{print $6}')))
+cropbox_t=$((2*$(pdfinfo -box -f 1 -l 1 "${pdf}" | grep -a "CropBox" | awk '{print $7}')))
 crop_width=$((cropbox_r - cropbox_l))
 crop_height=$((cropbox_t - cropbox_b))
 base_name=$(basename "${pdf}" .pdf)
