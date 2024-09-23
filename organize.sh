@@ -36,6 +36,10 @@ else
     echo "Configuration file ${CONFIG_FILE} not found!"
     exit 1
 fi
+./.check-before-organize.sh
+if [[ "$?" -ne 0 ]]; then
+	exit 10
+fi
 jpgQ=$GENERATE_JPG
 webpQ=$GENERATE_WEBP
 verboseQ=0

@@ -10,16 +10,19 @@
 
 ## `.conf` 文件
 
-如果你需要在本地运行这些脚本，请先编写两个 `.conf` 文件。以下是示例，您可根据自己的需要加以调整。
+如果你需要在本地运行这些脚本，请先编写一个 `.conf` 文件并置于本目录中。以下是示例，您可根据自己的需要加以调整。
 
 ```bash config
 # .config.conf
-BYRDOCS_DIR="${HOME}/BYRDOCS/resources"
-STOCKPILE_DIR="${HOME}/BYRDOCS/stockpile"
-COVERS_DIR="${BYRDOCS_DIR}/covers"
-BOOKS_DIR="${BYRDOCS_DIR}/books"
-TESTS_DIR="${BYRDOCS_DIR}/tests"
-DOCS_DIR="${BYRDOCS_DIR}/docs"
+BYRDOCS_DIR="${HOME}/BYRDOCS"
+ARCHIVE_DIR="${BYRDOCS_DIR}/archive"
+RESOURCES_DIR="${BYRDOCS_DIR}/resources"
+STOCKPILE_DIR="${BYRDOCS_DIR}/stockpile"
+LOCK_DIR="${BYRDOCS_DIR}/lock"
+COVERS_DIR="${RESOURCES_DIR}/covers"
+BOOKS_DIR="${RESOURCES_DIR}/books"
+TESTS_DIR="${RESOURCES_DIR}/tests"
+DOCS_DIR="${RESOURCES_DIR}/docs"
 GENERATE_JPG="1"
 GENERATE_WEBP="1"
 PDF_VIEWER="evince"
