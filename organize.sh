@@ -36,10 +36,6 @@ else
     echo "Configuration file ${CONFIG_FILE} not found!"
     exit 1
 fi
-./.check-before-organize.sh
-if [[ "$?" -ne 0 ]]; then
-	exit 10
-fi
 jpgQ=$GENERATE_JPG
 webpQ=$GENERATE_WEBP
 verboseQ=0
@@ -103,6 +99,10 @@ if [[ -n $(find "${dirs_to_find[@]}" -type f -name "${md5}.*") ]]; then
     exit 5
 fi
 echo $md5
+./.check-before-organize.sh
+if [[ "$?" -ne 0 ]]; then
+	exit 10
+fi
 if [[ "$jpgQ" -eq 1 ]] || [[ "$webpQ" -eq 1 ]]; then
     ./.check-commands.sh pdftoppm cwebp
     if [[ "$?" -ne 0 ]]; then

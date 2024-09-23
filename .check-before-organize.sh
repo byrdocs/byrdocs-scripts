@@ -14,12 +14,22 @@ else
 	exit 1
 fi
 cd "${ARCHIVE_DIR}"
-git fetch --all
-git pull origin -q master
+git fetch origin master
+LOCAL=$(git rev-parse @)
+REMOTE=$(git rev-parse @{u})
+BASE=$(git merge-base @ @{u})
+if [[ "${LOCAL}" != "${REMOTE}" ]] && [[ "${LOCAL}" == "${BASE}" ]]; then
+	git pull origin -q master
+fi
 archive_time=$(git log -1 --format=%ct)
 cd "${LOCK_DIR}"
-git fetch -q --all
-git pull origin -q master
+git fetch -q origin master
+LOCAL=$(git rev-parse @)
+REMOTE=$(git rev-parse @{u})
+BASE=$(git merge-base @ @{u})
+if [[ "${LOCAL}" != "${REMOTE}" ]] && [[ "${LOCAL}" == "${BASE}" ]]; then
+	git pull origin -q master
+fi
 lock_time=$(git log -1 --format=%ct)
 lock_usr=$(git log -1 --format=%an)
 if [[ "${archive_time}" -lt "${lock_time}" ]]; then
