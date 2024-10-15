@@ -1,9 +1,9 @@
 #!/bin/zsh-5.9
 usage() {
     cat <<EOF
-Usage: $0 <pattern> ...
+Usage: $0 <md5> ...
 
-Remove all files with the name matching '<pattern>' in 'byrdocs.org/'
+Remove all files with the name matching '<md5>' in "RESOURCES_DIR"
 EOF
 }
 if [[ "$#" -lt 1 ]]; then
@@ -18,7 +18,7 @@ else
     exit 2
 fi
 for pat in "$@"; do
-    find "${BYRDOCS_DIR}" -name "$pat"
+    find "${BYRDOCS_DIR}" -name "${pat}.*"
     echo -n "Do you wish to remove these files? (y/n) "
     read -n 1 -s yn
     echo
